@@ -12,14 +12,12 @@ app.post("/session", async (req, res) => {
     const baseUrl = mode === "real"
       ? "https://api-capital.backend-capital.com/api/v1"
       : "https://demo-api-capital.backend-capital.com/api/v1";
-
     const r = await axios.post(`${baseUrl}/session`, {
       identifier: email,
       password
     }, {
       headers: { "X-CAP-API-KEY": apiKey, "Content-Type": "application/json" }
     });
-
     res.json(r.data);
   } catch (e) {
     console.log("Error proxy:", e.response?.data || e.message);
