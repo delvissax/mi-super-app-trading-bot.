@@ -1,0 +1,30 @@
+import express from "express";
+import axios from "axios";
+import cors from "cors";
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.post("/session", async (req, res) => {
+  try {
+    const { email, password, apiKey, mode } = req.body;
+    const baseUrl = mode === "real"
+      ? "https://api-capital.backend-capital.com/api/v1"
+      : "https://demo-api-capital.backend-capital.com/api/v1";
+
+    const r = await axios.post(`${baseUrl}/session`, {
+      identifier: email,
+      password
+    }, {
+      headers: { "X-CAP-API-KEY": apiKey, "Content-Type": "application/json" }
+    });
+
+    res.json(r.data);
+  } catch (e) {
+    console.log("Error proxy:", e.response?.data || e.message);
+    res.status(500).json({ error: e.response?.data || e.message });
+  }
+});
+
+app.listen(3000, () => console.log("Proxy Capital.com activo en puerto 3000"));
