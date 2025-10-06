@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
-import { Server } from "ws";
+import WebSocket from "ws";
 import nodeCron from "node-cron";
 
 dotenv.config();
