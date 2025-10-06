@@ -1,11 +1,23 @@
 import express from "express";
 import axios from "axios";
 import cors from "cors";
+import dotenv from "dotenv";
+import helmet from "helmet";
+import morgan from "morgan";
+import { Server } from "ws";
+import nodeCron from "node-cron";
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(helmet());
+app.use(morgan("dev"));
 
+const PORT = process.env.PORT || 3000;
+
+// Ejemplo de endpoint
 app.post("/session", async (req, res) => {
   try {
     const { email, password, apiKey, mode } = req.body;
@@ -25,4 +37,19 @@ app.post("/session", async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("Proxy Capital.com activo en puerto 3000"));
+// Ejemplo WebSocket server
+const server = app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
+const wss = new Server({ server });
+
+wss.on("connection", ws => {
+  ws.send("Conexión WebSocket exitosa!");
+  ws.on("message", message => {
+    console.log("Mensaje recibido WS:", message);
+    ws.send(`Echo: ${message}`);
+  });
+});
+
+// Ejemplo de tarea programada cada minuto
+nodeCron.schedule("* * * * *", () => {
+  console.log("Tarea automática ejecutada cada minuto");
+});
